@@ -47,21 +47,21 @@ namespace OpenHardwareMonitor.Hardware {
         IOControlCode.Access.Read);
 
     private static Assembly GetAssembly() {
-      return typeof(Ring0).Assembly;
+      return Assembly.GetExecutingAssembly();
     }
 
     private static string GetTempFileName() {
-      
+
       // try to create one in the application folder
-      string location = GetAssembly().Location;
-      if (!string.IsNullOrEmpty(location)) {        
-        try {
+      try
+      {
+        string location = GetAssembly().Location;
+        if (!string.IsNullOrEmpty(location)) {
           string fileName = Path.ChangeExtension(location, ".sys");
-          using (FileStream stream = File.Create(fileName)) {
+          using (FileStream stream = File.Create(fileName))
             return fileName;
-          }
-        } catch (Exception) { }
-      }
+        }
+      } catch (Exception) { }
 
       // if this failed, try to get a file in the temporary folder
       try {

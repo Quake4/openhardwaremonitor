@@ -806,6 +806,10 @@ namespace OpenHardwareMonitor.GUI {
         using (TextWriter w = new StreamWriter(saveFileDialog.FileName)) {
           w.Write(report);
         }
+        try {
+          System.Diagnostics.Process.Start(saveFileDialog.FileName);
+        }
+        catch { }
       }
     }
 

@@ -287,6 +287,10 @@ namespace OpenHardwareMonitor.Hardware.HDD {
       get { return "Total LBAs Written"; }
     }
 
+    public static string TotalWrittenToNAND {
+      get { return "Total Written to NAND"; }
+    }
+
     public static string TransferErrorRate {
       get { return "Transfer Error Rate"; }
     }

@@ -328,9 +328,9 @@ namespace OpenHardwareMonitor.Hardware.ATI {
         var status = ADL.ADL_Adapter_MemoryInfo_Get(adapterIndex, ref mi);
         r.Append(" Status: ");
         r.AppendLine(status.ToString());
-        r.AppendFormat(" Size: {0}{1}", mi.Size, Environment.NewLine);
-        r.AppendFormat(" Type: {0}{1}", mi.Type, Environment.NewLine);
-        r.AppendFormat(" Bandwidth: {0}{1}", mi.Bandwidth, Environment.NewLine);
+        r.AppendLine($" Size: {mi.Size}");
+        r.AppendLine($" Type: {mi.Type}");
+        r.AppendLine($" Bandwidth: {mi.Bandwidth}");
       }
       catch (Exception e) {
         r.AppendLine(" Status: " + e.Message);

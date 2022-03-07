@@ -115,7 +115,7 @@ namespace OpenHardwareMonitor.Hardware.Nvidia {
     }
 
     private static string GetName(NvPhysicalGpuHandle handle) {
-      string result = "nVidia";
+      string result = "NVIDIA";
       if (NVAPI.NvAPI_GPU_GetFullName(handle, out string gpuName) == NvStatus.OK)
         result += " " + gpuName.Trim();
       return result;

@@ -112,15 +112,20 @@ namespace OpenHardwareMonitor.Hardware.ATI {
                   if (!found) {
                     var nameBuilder = new StringBuilder(adapterInfo[i].AdapterName);
                     nameBuilder.Replace("(TM)", " ");
-                    for (int j = 0; j < 10; j++) nameBuilder.Replace("  ", " ");
-                    var name = nameBuilder.ToString().Trim();
 
                     var mi = new ADLMemoryInfo();
                     if (ADL.ADL_Adapter_MemoryInfo_Get(adapterInfo[i].AdapterIndex, ref mi) == ADLStatus.OK)
                       if (mi.Size > 0)
-                        name += string.Format(" {0} GB", mi.Size / 1024 / 1024 / 1024);
+                        nameBuilder.Append(string.Format(" {0} GB", mi.Size / 1024 / 1024 / 1024));
 
-                    hardware.Add(new ATIGPU(name,
+                    int len = 0;
+                    do
+                    {
+                      len = nameBuilder.Length;
+                      nameBuilder.Replace("  ", " ");
+                    } while (len != nameBuilder.Length);
+
+                    hardware.Add(new ATIGPU(nameBuilder.ToString().Trim(),
                       adapterInfo[i].AdapterIndex,
                       adapterInfo[i].BusNumber,
                       adapterInfo[i].DeviceNumber, context, settings));

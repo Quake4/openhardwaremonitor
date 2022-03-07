@@ -40,6 +40,30 @@ namespace OpenHardwareMonitor.Hardware.ATI {
   }
 
   [StructLayout(LayoutKind.Sequential)]
+  internal struct ADLMemoryInfo
+  {
+    public long Size;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = ADL.ADL_MAX_PATH)]
+    public string Type;
+    public long Bandwidth;
+  }
+
+  [StructLayout(LayoutKind.Sequential)]
+  internal struct ADLMemoryRequired
+  {
+    public long Required;
+    public int Type;
+    public int FeatureValue;
+  }
+
+  [StructLayout(LayoutKind.Sequential)]
+  internal struct ADLMemoryDisplayFeatures
+  {
+    public int DisplayIndex;
+    public int FeatureValue;
+  }
+
+  [StructLayout(LayoutKind.Sequential)]
   internal struct ADLPMActivity {
     public int Size;
     public int EngineClock;
@@ -371,6 +395,7 @@ namespace OpenHardwareMonitor.Hardware.ATI {
       out ADLODNPerformanceStatus performanceStatus);
     public delegate ADLStatus ADL_Graphics_Versions_GetDelegate(
       out ADLVersionsInfo versionInfo);
+    public delegate ADLStatus ADL_Adapter_MemoryInfo_GetDelegate(int adapterIndex, ref ADLMemoryInfo MemoryInfo);
 
     private static ADL_Main_Control_CreateDelegate
       _ADL_Main_Control_Create;
@@ -417,6 +442,8 @@ namespace OpenHardwareMonitor.Hardware.ATI {
       ADL2_OverdriveN_PerformanceStatus_Get;
     public static ADL_Graphics_Versions_GetDelegate
       ADL_Graphics_Versions_Get;
+    public static ADL_Adapter_MemoryInfo_GetDelegate
+      ADL_Adapter_MemoryInfo_Get;
 
     private static string dllName;
 
@@ -480,6 +507,7 @@ namespace OpenHardwareMonitor.Hardware.ATI {
         out ADL2_OverdriveN_PerformanceStatus_Get);
       GetDelegate("ADL_Graphics_Versions_Get",
         out ADL_Graphics_Versions_Get);
+      GetDelegate("ADL_Adapter_MemoryInfo_Get", out ADL_Adapter_MemoryInfo_Get);
   }
 
     static ADL() {

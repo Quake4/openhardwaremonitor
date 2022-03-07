@@ -44,6 +44,8 @@ namespace OpenHardwareMonitor.Hardware.ATI {
     private readonly Sensor memoryLoad;
     private readonly Sensor controlSensor;
     private readonly Control fanControl;
+    private readonly Sensor memoryTotal;
+    private readonly Sensor memoryUsed;
 
     private IntPtr context;
     private readonly int overdriveVersion;
@@ -105,6 +107,9 @@ namespace OpenHardwareMonitor.Hardware.ATI {
       this.coreLoad = new Sensor("GPU Core", 0, SensorType.Load, this, settings);
       this.memoryLoad = new Sensor("GPU Memory", 1, SensorType.Load, this, settings);
 
+      this.memoryUsed = new Sensor("GPU Memory Used", 0, SensorType.SmallData, this, settings);
+      this.memoryTotal = new Sensor("GPU Memory Total", 1, SensorType.SmallData, this, settings);
+
       this.controlSensor = new Sensor("GPU Fan", 0, SensorType.Control, this, settings);
 
       ADLFanSpeedInfo afsi = new ADLFanSpeedInfo();
@@ -158,7 +163,6 @@ namespace OpenHardwareMonitor.Hardware.ATI {
 
     public int DeviceNumber { get { return deviceNumber; } }
 
-
     public override HardwareType HardwareType {
       get { return HardwareType.GpuAti; }
     }
@@ -186,7 +190,6 @@ namespace OpenHardwareMonitor.Hardware.ATI {
       } else {
         sensor.Value = null;
       }
-
     }
 
     public override string GetReport() {
@@ -314,6 +317,22 @@ namespace OpenHardwareMonitor.Hardware.ATI {
         r.AppendFormat(" MaximumBusLanes: {0}{1}",
           adlp.MaximumBusLanes, Environment.NewLine);
       } catch (Exception e) {
+        r.AppendLine(" Status: " + e.Message);
+      }
+      r.AppendLine();
+
+      r.AppendLine("Adapter MemoryInfo");
+      r.AppendLine();
+      try {
+        var mi = new ADLMemoryInfo();
+        var status = ADL.ADL_Adapter_MemoryInfo_Get(adapterIndex, ref mi);
+        r.Append(" Status: ");
+        r.AppendLine(status.ToString());
+        r.AppendFormat(" Size: {0}{1}", mi.Size, Environment.NewLine);
+        r.AppendFormat(" Type: {0}{1}", mi.Type, Environment.NewLine);
+        r.AppendFormat(" Bandwidth: {0}{1}", mi.Bandwidth, Environment.NewLine);
+      }
+      catch (Exception e) {
         r.AppendLine(" Status: " + e.Message);
       }
       r.AppendLine();
@@ -574,6 +593,16 @@ namespace OpenHardwareMonitor.Hardware.ATI {
           memoryClock.Value = null;
           coreVoltage.Value = null;
           coreLoad.Value = null;
+        }
+      }
+
+      ADLMemoryInfo mi = new ADLMemoryInfo();
+      if (ADL.ADL_Adapter_MemoryInfo_Get(adapterIndex, ref mi) == ADLStatus.OK) {
+        if (mi.Size > 0) {
+          memoryTotal.Value = mi.Size / 1024 / 1024;
+          ActivateSensor(memoryTotal);
+        } else {
+          memoryTotal.Value = null;
         }
       }
     }

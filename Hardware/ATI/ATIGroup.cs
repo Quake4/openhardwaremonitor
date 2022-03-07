@@ -115,6 +115,11 @@ namespace OpenHardwareMonitor.Hardware.ATI {
                     for (int j = 0; j < 10; j++) nameBuilder.Replace("  ", " ");
                     var name = nameBuilder.ToString().Trim();
 
+                    var mi = new ADLMemoryInfo();
+                    if (ADL.ADL_Adapter_MemoryInfo_Get(adapterInfo[i].AdapterIndex, ref mi) == ADLStatus.OK)
+                      if (mi.Size > 0)
+                        name += string.Format(" {0} GB", mi.Size / 1024 / 1024 / 1024);
+
                     hardware.Add(new ATIGPU(name,
                       adapterInfo[i].AdapterIndex,
                       adapterInfo[i].BusNumber,
